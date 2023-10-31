@@ -1,0 +1,4 @@
+user=node
+host=birthday.cc
+root_dir=/home/node/workspace/github.com/beenotung/birthday
+pm2_name="birthday"
