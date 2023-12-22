@@ -1,13 +1,13 @@
 import { apiEndpointTitle, title } from '../../config.js'
 import { commonTemplatePageText } from '../components/common-template.js'
 import { Link, Redirect } from '../components/router.js'
-import { Context, DynamicContext, ExpressContext } from '../context.js'
+import { DynamicContext, ExpressContext } from '../context.js'
 import { o } from '../jsx/jsx.js'
 import { Routes, getContextSearchParams } from '../routes.js'
 import { proxy } from '../../../db/proxy.js'
 import { eraseUserIdFromCookie, getAuthUserId } from '../auth/user.js'
 import { Router } from 'express'
-import { createUploadForm, toFiles } from '../upload.js'
+import { createUploadForm } from '../upload.js'
 import { HttpError } from '../../http-error.js'
 import Style from '../components/style.js'
 import { renderError } from '../components/error.js'
@@ -35,7 +35,7 @@ let ProfilePage = (_attrs: {}, context: DynamicContext) => {
   return (
     <div id="profile">
       {style}
-      <h2>Profile Page</h2>
+      <h1>Profile Page</h1>
       <p>{commonTemplatePageText}</p>
       {user_id ? (
         renderProfile(user_id, context)
@@ -61,8 +61,8 @@ function renderProfile(user_id: number, context: DynamicContext) {
     <>
       <p>Welcome back, {user.username}</p>
       <form
-        action="/avatar"
         method="POST"
+        action="/avatar"
         enctype="multipart/form-data"
         style="margin-bottom: 1rem"
       >
@@ -161,7 +161,7 @@ function attachRoutes(app: Router) {
     form.parse(req, (err, fields, files) => {
       if (err) return next(err)
 
-      let file = toFiles(files.avatar)[0]
+      let file = files.avatar?.[0]
       if (!file) return reject(400, 'missing avatar file')
 
       user.avatar = file.newFilename

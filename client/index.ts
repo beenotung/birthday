@@ -27,7 +27,8 @@ connectWS({
   attachWS(ws) {
     console.debug('attach ws')
 
-    let emit: WindowStub['emit'] = function emit() {
+    function emit(...args: unknown[]): void
+    function emit(): void {
       ws.send(Array.from(arguments) as ClientMessage)
     }
 
@@ -52,8 +53,17 @@ connectWS({
     }
 
     function submitForm(form: HTMLFormElement) {
+      let formData = new FormData(form)
+      if (form.method === 'get') {
+        let url = new URL(form.action || location.href)
+        url.search = new URLSearchParams(formData as {}).toString()
+        let href = url.href.replace(origin, '')
+        history.pushState(null, document.title, href)
+        emit(href)
+        return
+      }
       let data = {} as Record<string, FormDataEntryValue | FormDataEntryValue[]>
-      new FormData(form).forEach((value, key) => {
+      formData.forEach((value, key) => {
         if (key in data) {
           let prevValue = data[key]
           if (Array.isArray(prevValue)) {
@@ -97,6 +107,8 @@ connectWS({
         timeZone,
         timezoneOffset,
         document.cookie,
+        win._navigation_type_,
+        win._navigation_method_,
       ]
       ws.send(message)
     }

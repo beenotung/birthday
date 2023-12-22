@@ -1,5 +1,6 @@
-import { VElement, VNode, VNodeList } from '../../../client/jsx/types.js'
+import { VElement, VNodeList, props } from '../../../client/jsx/types.js'
 import { o } from '../jsx/jsx.js'
+import { attrs } from '../jsx/types.js'
 
 export type OptionValue = string | number
 
@@ -13,8 +14,7 @@ export function Select<
     placeholder?: string
     options: SelectOption[]
     value?: OptionValue | null
-    [name: string]: any
-  },
+  } & (attrs | props),
 >(attrs: Attrs): VElement {
   let { value, placeholder, options, ...selectAttrs } = attrs
 
@@ -45,5 +45,5 @@ export function Select<
     }
   }
 
-  return ['select', selectAttrs, nodes]
+  return ['select', selectAttrs as attrs, nodes]
 }
