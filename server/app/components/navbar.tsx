@@ -51,12 +51,21 @@ let style = Style(/* css */ `
 		position: fixed;
 		background-color: #eee;
 		inset: 0;
-		margin-top: 3rem;
+		margin-top: 3.5rem;
+		overflow: auto;
 	}
 	.navbar [name=navbar-menu-toggle]:checked ~ .navbar-menu {
 		display: initial;
+		z-index: 2;
 	}
-	.navbar .navbar-menu-item {}
+	.navbar .navbar-menu-item {
+		border-bottom: none;
+		display: block;
+		margin-inline-start: 1rem;
+		margin-block-start: 1rem;
+		font-size: 1.25rem;
+		width: fit-content;
+	}
 }
 `)
 

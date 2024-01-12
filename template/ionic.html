@@ -1,20 +1,4 @@
-interface HTMLStream {
-  write(chunk: string): void
-  flush(): void
-}
-type HTMLFunc = (stream: HTMLStream) => void
-
-export type IndexOptions = {
-  title: string | HTMLFunc
-  description: string | HTMLFunc
-  app: string | HTMLFunc
-}
-
-export function renderIndexTemplate(
-  stream: HTMLStream,
-  options: IndexOptions,
-): void {
-  stream.write(/* html */ `<!doctype html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -23,12 +7,8 @@ export function renderIndexTemplate(
       name="viewport"
       content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=6.0"
     />
-    <title>`)
-  typeof options.title == 'function' ? options.title(stream) : stream.write(options.title)
-  stream.write(/* html */ `</title>
-    <meta name="description" content="`)
-  typeof options.description == 'function' ? options.description(stream) : stream.write(options.description)
-  stream.write(/* html */ `" />
+    <title>{title}</title>
+    <meta name="description" content="{description}" />
   </head>
   <body>
     <div id="noscript" aria-hidden="true">
@@ -43,9 +23,6 @@ export function renderIndexTemplate(
       interactive when javascript is enabled.
     </div>
     <style>
-      body {
-        padding-bottom: 2.5rem;
-      }
       #noscript {
         display: none;
       }
@@ -81,10 +58,32 @@ export function renderIndexTemplate(
       document.getElementById('noscript').remove()
       document.getElementById('ws_status').removeAttribute('hidden')
     </script>
-    `)
-  typeof options.app == 'function' ? options.app(stream) : stream.write(options.app)
-  stream.write(/* html */ `
+    <script
+      type="module"
+      src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.esm.js"
+    ></script>
+    <script
+      nomodule
+      src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.js"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@ionic/core/css/ionic.bundle.css"
+    />
+    <style>
+      html:not(.hydrated) body {
+        display: initial;
+      }
+      html:not(.hydrated) .app {
+        display: none;
+      }
+      .md .ios-only {
+        display: none;
+      }
+      .ios .md-only {
+        display: none;
+      }
+    </style>
+    {app}
   </body>
 </html>
-`)
-}

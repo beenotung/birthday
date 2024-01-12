@@ -1,11 +1,10 @@
 import { capitalize } from '@beenotung/tslib/string.js'
 import { Router } from 'url-router.ts'
-import { config, title } from '../config.js'
+import { LayoutType, config, title } from '../config.js'
 import { Redirect } from './components/router.js'
 import type { DynamicContext } from './context'
 import { o } from './jsx/jsx.js'
 import type { Node } from './jsx/types'
-import About, { License } from './pages/about.js'
 import UserAgents from './pages/user-agents.js'
 import Home from './pages/home.js'
 import NotFoundPageRoute from './pages/not-found.js'
@@ -13,8 +12,13 @@ import { then } from '@beenotung/tslib/result.js'
 import Login from './pages/login.js'
 import Register from './pages/register.js'
 import Profile from './pages/profile.js'
+import VerificationCode from './pages/verification-code.js'
 import Calendar from './pages/calendar.js'
 import type { MenuRoute } from './components/menu'
+import DemoToast from './pages/demo-toast.js'
+import appHome from './pages/app-home.js'
+import appAbout from './pages/app-about.js'
+import appCharacter from './pages/app-character.js'
 
 let titles: Record<string, string> = {}
 
@@ -60,20 +64,10 @@ let routeDict: Routes = {
     description:
       'Getting Started with ts-liveview - a server-side rendering realtime webapp framework with progressive enhancement',
     menuText: 'Home',
-    menuUrl: '/',
     node: Home,
   },
   ...Calendar.routes,
-  '/about/:mode?': {
-    title: title('About'),
-    description:
-      'About ts-liveview - a server-side rendering realtime webapp framework with progressive enhancement',
-    menuText: 'About',
-    menuUrl: '/about',
-    menuMatchPrefix: true,
-    node: About,
-    streaming: true,
-  },
+  ...DemoToast.routes,
   '/user-agents': {
     title: title('User Agents of Visitors'),
     description: "User agents of this site's visitors",
@@ -83,17 +77,19 @@ let routeDict: Routes = {
   ...Login.routes,
   ...Register.routes,
   ...Profile.routes,
-  '/LICENSE': {
-    title: 'BSD 2-Clause License of ts-liveview',
-    description:
-      'ts-liveview is a free open source project licensed under the BSD 2-Clause License',
-    node: License,
-  },
+  ...VerificationCode.routes,
+}
+if (config.layout_type === LayoutType.ionic) {
+  routeDict = {
+    ...routeDict,
+    ...appHome.routes,
+    ...appCharacter.routes,
+    ...appAbout.routes,
+  }
 }
 
 export let redirectDict: Record<string, string> = {
   '/server/app/pages/home.tsx': '/',
-  '/server/app/app.tsx': '/about/markdown',
 }
 
 export const pageRouter = new Router<PageRoute>()

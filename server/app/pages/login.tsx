@@ -1,4 +1,4 @@
-import { apiEndpointTitle, config, title } from '../../config.js'
+import { LayoutType, apiEndpointTitle, config, title } from '../../config.js'
 import { commonTemplatePageText } from '../components/common-template.js'
 import { Link, Redirect } from '../components/router.js'
 import { Context, DynamicContext, ExpressContext } from '../context.js'
@@ -12,14 +12,44 @@ import { getStringCasual } from '../helpers.js'
 import { comparePassword } from '../../hash.js'
 import { UserMessageInGuestView } from './profile.js'
 import { getAuthUserId, writeUserIdToCookie } from '../auth/user.js'
+import Style from '../components/style.js'
+import { IonBackButton } from '../components/ion-back-button.js'
+
+let style = Style(/* css */ `
+#login .field {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+`)
 
 let LoginPage = (
   <div id="login">
+    {style}
     <h1>Login to {config.short_site_name}</h1>
     <p>{commonTemplatePageText}</p>
     <Main />
   </div>
 )
+if (config.layout_type === LayoutType.ionic) {
+  LoginPage = (
+    <>
+      <ion-header>
+        <ion-toolbar color="primary">
+          <IonBackButton href="/" backText="Home" color="light" />
+          <ion-title>Login</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <div id="login">
+          {style}
+          <h1>Welcome back to {config.short_site_name}</h1>
+          <p>{commonTemplatePageText}</p>
+          <Main />
+        </div>
+      </ion-content>
+    </>
+  )
+}
 
 function Main(_attrs: {}, context: Context) {
   let user_id = getAuthUserId(context)
@@ -28,7 +58,30 @@ function Main(_attrs: {}, context: Context) {
 
 let guestView = (
   <>
-    <form method="post" action="/login/submit">
+    <div>Login with:</div>
+    <form
+      method="POST"
+      action="/verify/email/submit"
+      // onsubmit="emitForm(event)"
+    >
+      <div class="field">
+        <label>
+          Email
+          <div class="input-container">
+            <input name="email" type="email" autocomplete="email" />
+          </div>
+        </label>
+      </div>
+      <div class="field">
+        <label>
+          <input type="checkbox" name="include_link" /> Include magic link (more
+          convince but may be treated as spam)
+        </label>
+      </div>
+      <input type="submit" value="Verify" />
+    </form>
+    <div class="or-line flex-center">or</div>
+    <form method="post" action="/login/with/password/submit">
       <label>
         Username or email address
         <div class="input-container">
@@ -56,6 +109,76 @@ let guestView = (
     </div>
   </>
 )
+if (config.layout_type === LayoutType.ionic) {
+  guestView = (
+    <>
+      <div>Login with:</div>
+      <form
+        method="POST"
+        action="/verify/email/submit"
+        // onsubmit="emitForm(event)"
+      >
+        <ion-list>
+          <ion-item>
+            <ion-input
+              label="Email"
+              label-placement="floating"
+              type="email"
+              name="email"
+              autocomplete="email"
+            ></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-checkbox name="include_link" slot="start"></ion-checkbox>
+            <ion-label>Include magic link</ion-label>
+          </ion-item>
+          <ion-note color="dark">
+            <div class="ion-padding-horizontal">
+              (More convince but may be treated as spam)
+            </div>
+          </ion-note>
+        </ion-list>
+        <div class="ion-text-center ion-margin">
+          <ion-button type="submit" fill="block" color="tertiary">
+            Verify
+          </ion-button>
+        </div>
+      </form>
+      <div class="or-line flex-center">or</div>
+      <form method="post" action="/login/with/password/submit">
+        <ion-list>
+          <ion-item>
+            <ion-input
+              label="Username or email address"
+              label-placement="floating"
+              name="loginId"
+              autocomplete="username"
+            ></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-input
+              label="Password"
+              label-placement="floating"
+              name="password"
+              type="password"
+              autocomplete="current-password"
+            ></ion-input>
+          </ion-item>
+        </ion-list>
+        <div class="ion-text-center ion-margin">
+          <ion-button type="submit" fill="block" color="primary">
+            Login
+          </ion-button>
+        </div>
+        <Message />
+      </form>
+      <div>
+        New to {config.short_site_name}?{' '}
+        <Link href="/register">Create an account</Link>.
+      </div>
+    </>
+  )
+}
 
 let codes: Record<string, string> = {
   not_found: 'user not found',
