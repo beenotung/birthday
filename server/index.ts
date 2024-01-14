@@ -36,7 +36,7 @@ listenWSSConnection({
 
 app.use(cookieMiddleware)
 app.use((req, res, next) => {
-  logRequest(req, req.method, req.url)
+  logRequest(req, req.method, req.url, null)
   next()
 })
 
