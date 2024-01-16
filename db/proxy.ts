@@ -69,20 +69,22 @@ export type RequestLog = {
   timestamp: number
 }
 
+export type VerificationAttempt = {
+  id?: null | number
+  passcode: string // char(6)
+  email: string
+}
+
 export type VerificationCode = {
   id?: null | number
   passcode: string // char(6)
   email: string
   request_time: number
   revoke_time: null | number
-}
-
-export type VerificationAttempt = {
-  id?: null | number
-  passcode: string // char(6)
-  email: string
   match_id: null | number
-  match?: VerificationCode
+  match?: VerificationAttempt
+  user_id: null | number
+  user?: User
 }
 
 export type CalendarEvent = {
@@ -103,8 +105,8 @@ export type DBProxy = {
   ua_stat: UaStat[]
   user: User[]
   request_log: RequestLog[]
-  verification_code: VerificationCode[]
   verification_attempt: VerificationAttempt[]
+  verification_code: VerificationCode[]
   calendar_event: CalendarEvent[]
 }
 
@@ -131,10 +133,11 @@ export let proxy = proxySchema<DBProxy>({
       ['request_session', { field: 'request_session_id', table: 'request_session' }],
       ['user', { field: 'user_id', table: 'user' }],
     ],
-    verification_code: [],
-    verification_attempt: [
+    verification_attempt: [],
+    verification_code: [
       /* foreign references */
-      ['match', { field: 'match_id', table: 'verification_code' }],
+      ['match', { field: 'match_id', table: 'verification_attempt' }],
+      ['user', { field: 'user_id', table: 'user' }],
     ],
     calendar_event: [
       /* foreign references */
