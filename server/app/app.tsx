@@ -194,7 +194,7 @@ function Footer(attrs: { style?: string }) {
 
 // prefer flat router over nested router for less overhead
 export function attachRoutes(app: Router) {
-  // ajax/middleware routes
+  // ajax/upload/middleware routes
   app.use(renewAuthCookieMiddleware)
   Profile.attachRoutes(app)
 
@@ -299,7 +299,7 @@ function streamHTML(
   }
 }
 
-export let onWsMessage: OnWsMessage = (event, ws, _wss) => {
+export let onWsMessage: OnWsMessage = async (event, ws, _wss) => {
   console.log('ws message:', event)
   // TODO handle case where event[0] is not url
   let eventType: string | undefined
@@ -352,9 +352,16 @@ export let onWsMessage: OnWsMessage = (event, ws, _wss) => {
     event: eventType,
     session,
   }
-  then(matchRoute(context), route => {
-    let node = App(route)
-    if (navigation_type === 'express' && navigation_method !== 'GET') return
-    dispatchUpdate(context, node, route.title)
-  })
+  try {
+    await then(matchRoute(context), route => {
+      let node = App(route)
+      if (navigation_type === 'express' && navigation_method !== 'GET') return
+      dispatchUpdate(context, node, route.title)
+    })
+  } catch (error) {
+    if (error == EarlyTerminate) {
+      return
+    }
+    console.error(error)
+  }
 }
