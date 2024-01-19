@@ -1,6 +1,11 @@
 import { o } from '../jsx/jsx.js'
 import { prerender } from '../jsx/html.js'
 import SourceCode from '../components/source-code.js'
+import { mapArray } from '../components/fragment.js'
+import { proxy } from '../../../db/proxy.js'
+import { Context } from '../context.js'
+import { getAuthUserId } from '../auth/user.js'
+import { Link } from '../components/router.js'
 
 // Calling <Component/> will transform the JSX into AST for each rendering.
 // You can reuse a pre-compute AST like `let component = <Component/>`.
@@ -10,28 +15,40 @@ import SourceCode from '../components/source-code.js'
 
 let content = (
   <div id="home">
-    <h1>Home Page</h1>
-    <p>You can get started by replacing the contents in this page</p>
+    <h1>Birthday List</h1>
     <p>
-      When the browser load this url, the server responses complete html content
-      to the GET request. This allows the browser to perform meaningful paint as
-      soon as possible. And it's ideal for SEO.
+      This site list out the birthday / initial release date of{' '}
+      <abbr title="free and libre open source software">FLOSS</abbr>
     </p>
-    <p>
-      Try some reactive demo:{' '}
-      <a href="https://liveviews.cc/thermostat" target="_blank">
-        Thermostat
-      </a>
-      ,{' '}
-      <a href="https://liveviews.cc/form" target="_blank">
-        Form Demo
-      </a>
-    </p>
+    {proxy.event_list.length == 0 ? (
+      <p>No event lists created yet.</p>
+    ) : (
+      <ul>
+        {mapArray(proxy.event_list, event_list => (
+          <li>{event_list.title}</li>
+        ))}
+      </ul>
+    )}
+    <CreateButton />
     <SourceCode page="home.tsx" />
   </div>
 )
 
-// And it can be pre-rendered into html as well
-let Home = prerender(content)
+function CreateButton(attrs: {}, context: Context) {
+  let user_id = getAuthUserId(context)
+  return (
+    <div style="margin-block: 1rem">
+      {user_id ? (
+        <Link href="/birthday-list/create">
+          <button>Create Birthday List</button>
+        </Link>
+      ) : (
+        <p>
+          You can create birthday list after <Link href="/login">login</Link>
+        </p>
+      )}
+    </div>
+  )
+}
 
-export default Home
+export default content

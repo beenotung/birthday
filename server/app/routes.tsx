@@ -1,3 +1,4 @@
+import BirthdayList from './pages/birthday-list.js'
 import { capitalize } from '@beenotung/tslib/string.js'
 import { Router } from 'url-router.ts'
 import { LayoutType, config, title } from '../config.js'
@@ -60,12 +61,13 @@ export type Routes = Record<string, PageRoute>
 // TODO direct support alternative urls instead of having to repeat the entry
 let routeDict: Routes = {
   '/': {
-    title: title('Home'),
+    title: title('Birthday List'),
     description:
-      'Getting Started with ts-liveview - a server-side rendering realtime webapp framework with progressive enhancement',
-    menuText: 'Home',
+      'A site that displays the birthday or initial release date of various FLOSS (free and libre open source software) projects. Explore the list and stay updated with the important dates of your favorite open source software projects',
+    menuText: 'Birthday List',
     node: Home,
   },
+  ...BirthdayList.routes,
   ...Calendar.routes,
   ...DemoToast.routes,
   '/user-agents': {
@@ -78,14 +80,6 @@ let routeDict: Routes = {
   ...Register.routes,
   ...Profile.routes,
   ...VerificationCode.routes,
-}
-if (config.layout_type === LayoutType.ionic) {
-  routeDict = {
-    ...routeDict,
-    ...appHome.routes,
-    ...appCharacter.routes,
-    ...appAbout.routes,
-  }
 }
 
 export let redirectDict: Record<string, string> = {

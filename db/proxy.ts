@@ -87,10 +87,24 @@ export type VerificationCode = {
   user?: User
 }
 
-export type CalendarEvent = {
+export type EventList = {
   id?: null | number
   user_id: number
   user?: User
+  title: string
+}
+
+export type EventEntity = {
+  id?: null | number
+  event_list_id: number
+  event_list?: EventList
+  title: string
+}
+
+export type EventDate = {
+  id?: null | number
+  event_entity_id: number
+  event_entity?: EventEntity
   date: string
   title: string
 }
@@ -107,7 +121,9 @@ export type DBProxy = {
   request_log: RequestLog[]
   verification_attempt: VerificationAttempt[]
   verification_code: VerificationCode[]
-  calendar_event: CalendarEvent[]
+  event_list: EventList[]
+  event_entity: EventEntity[]
+  event_date: EventDate[]
 }
 
 export let proxy = proxySchema<DBProxy>({
@@ -139,9 +155,17 @@ export let proxy = proxySchema<DBProxy>({
       ['match', { field: 'match_id', table: 'verification_attempt' }],
       ['user', { field: 'user_id', table: 'user' }],
     ],
-    calendar_event: [
+    event_list: [
       /* foreign references */
       ['user', { field: 'user_id', table: 'user' }],
+    ],
+    event_entity: [
+      /* foreign references */
+      ['event_list', { field: 'event_list_id', table: 'event_list' }],
+    ],
+    event_date: [
+      /* foreign references */
+      ['event_entity', { field: 'event_entity_id', table: 'event_entity' }],
     ],
   },
 })
