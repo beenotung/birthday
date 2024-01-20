@@ -1,11 +1,9 @@
-import { LayoutType, config } from '../config.js'
 import { ErrorStyle } from './components/error.js'
 import { SourceCodeStyle } from './components/source-code.js'
 import Style from './components/style.js'
 import { UpdateMessageStyle } from './components/update-message.js'
 import { CommonStyle } from './styles/common-style.js'
 import { FormStyle } from './styles/form-style.js'
-import { MobileStyle } from './styles/mobile-style.js'
 import { WebStyle } from './styles/web-style.js'
 
 export let appStyle = Style(/* css */ `
@@ -14,5 +12,5 @@ ${ErrorStyle}
 ${UpdateMessageStyle}
 ${CommonStyle}
 ${FormStyle}
-${config.layout_type === LayoutType.ionic ? MobileStyle : WebStyle}
+${WebStyle}
 `)

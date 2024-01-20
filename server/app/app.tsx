@@ -27,8 +27,7 @@ import {
 import type { ClientMountMessage, ClientRouteMessage } from '../../client/types'
 import { then } from '@beenotung/tslib/result.js'
 import { appStyle } from './app-style.js'
-import { renderWebTemplate } from '../../template/web.js'
-import { renderIonicTemplate } from '../../template/ionic.js'
+import { renderWebTemplate as renderAppTemplate } from '../../template/web.js'
 import { HTMLStream } from './jsx/stream.js'
 import { renewAuthCookieMiddleware } from './auth/user.js'
 import { getWsCookies } from './cookie.js'
@@ -96,13 +95,9 @@ type Layout = (route: PageRouteMatch) => Element
 let layouts: Record<LayoutType, Layout> = {
   [LayoutType.navbar]: NavbarApp,
   [LayoutType.sidebar]: SidebarApp,
-  [LayoutType.ionic]: IonicApp,
 }
 
 let App = layouts[config.layout_type]
-
-let renderAppTemplate =
-  App == IonicApp ? renderIonicTemplate : renderWebTemplate
 
 function NavbarApp(route: PageRouteMatch): Element {
   // you can write the AST direct for more compact wire-format
@@ -145,33 +140,6 @@ function SidebarApp(route: PageRouteMatch): Element {
             <Footer style="padding: 0.5rem;" />
           </div>
         </div>
-        <Flush />
-      </>,
-    ],
-  ]
-}
-
-function IonicApp(route: PageRouteMatch): Element {
-  // you can write the AST direct for more compact wire-format
-  return [
-    'div.app',
-    {},
-    [
-      // or you can write in JSX for better developer-experience (if you're coming from React)
-      <>
-        {appStyle}
-        {scripts}
-        <Flush />
-        <ion-app>
-          <div class="page">{route.node}</div>
-        </ion-app>
-        {Script(/* javascript */ `
-document.querySelector('.page')?.classList.add('hide')
-setTimeout(()=>{
-  document.querySelector('.page')?.classList.remove('hide')
-  document.body.classList.remove('back')
-}, 33)
-`)}
         <Flush />
       </>,
     ],

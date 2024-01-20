@@ -17,9 +17,6 @@ import VerificationCode from './pages/verification-code.js'
 import Calendar from './pages/calendar.js'
 import type { MenuRoute } from './components/menu'
 import DemoToast from './pages/demo-toast.js'
-import appHome from './pages/app-home.js'
-import appAbout from './pages/app-about.js'
-import appCharacter from './pages/app-character.js'
 
 let titles: Record<string, string> = {}
 
