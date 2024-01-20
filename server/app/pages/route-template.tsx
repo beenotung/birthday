@@ -47,11 +47,11 @@ function Main(attrs: {}, context: Context) {
       </ul>
       {user ? (
         <Link href="/__url__/add">
-          <button>Add Item</button>
+          <button>{addPageTitle}</button>
         </Link>
       ) : (
         <p>
-          You can add item after <Link href="/register">register</Link>.
+          You can add __name__ after <Link href="/register">register</Link>.
         </p>
       )}
     </>
