@@ -31,7 +31,7 @@ if [ -f "$file" ]; then
   fi
 fi
 
-cat "server/app/pages/template.tsx" \
+cat "server/app/pages/route-template.tsx" \
   | sed "s/__id__/$id/" \
   | sed "s/__title__/$title/" \
   | sed "s/__url__/$url/" \
@@ -44,5 +44,5 @@ file="server/app/routes.tsx"
 echo "import $id from './pages/$url.js'" > "$file.tmp"
 cat "$file" >> "$file.tmp"
 mv "$file.tmp" "$file"
-sed -i "s/let routeDict: Routes = {/let routeDict: Routes = {\n  ...$id.routes,/" "$file"
+sed -i '' "s/let routeDict: Routes = {/let routeDict: Routes = {\n  ...$id.routes,/" "$file"
 echo "updated $file"
