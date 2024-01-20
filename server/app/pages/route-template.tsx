@@ -36,15 +36,15 @@ let items = [
 function Main(attrs: {}, context: Context) {
   return (
     <>
-      <ion-list>
+      <ul>
         {mapArray(items, item => (
-          <ion-item>
+          <li>
             {item.title} ({item.slug})
-          </ion-item>
+          </li>
         ))}
-      </ion-list>
-      <Link href="/__url__/add" tagName="ion-button">
-        Add Item
+      </ul>
+      <Link href="/__url__/add">
+        <button>Add Item</button>
       </Link>
     </>
   )
